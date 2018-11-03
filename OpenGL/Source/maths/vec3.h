@@ -25,6 +25,7 @@ struct vec3 {
 	friend vec3 operator-(vec3 left, const vec3 & right);
 	friend vec3 operator*(vec3 left, const vec3 & right);
 	friend vec3 operator/(vec3 left, const vec3 & right);
+	friend vec3 operator*(vec3 left, const float & value);
 
 	vec3 operator+=(const vec3 & v3);
 	vec3 operator-=(const vec3 & v3);
@@ -34,6 +35,9 @@ struct vec3 {
 	bool operator!=(const vec3 & v3);
 
 	friend std::ostream & operator << (std::ostream & out, const vec3 & v3);
+
+	static vec3 normalize(const vec3 & v3);
+	static vec3 cross(const vec3 & left, const vec3 &right);
 };
 
 #endif 

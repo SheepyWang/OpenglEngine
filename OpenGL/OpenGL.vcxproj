@@ -23,6 +23,7 @@
     <ClCompile Include="Source\graphics\buffer\buffer.cpp" />
     <ClCompile Include="Source\graphics\buffer\indexbuffer.cpp" />
     <ClCompile Include="Source\graphics\buffer\vertexarray.cpp" />
+    <ClCompile Include="Source\graphics\camera.cpp" />
     <ClCompile Include="Source\graphics\shader.cpp" />
     <ClCompile Include="Source\graphics\Window.cpp" />
     <ClCompile Include="Source\maths\mat4.cpp" />
@@ -31,7 +32,6 @@
     <ClCompile Include="Source\maths\vec3u.cpp" />
     <ClCompile Include="Source\maths\vec4.cpp" />
     <ClCompile Include="Source\model\model.cpp" />
-    <ClCompile Include="Source\test\week5Test\test5.cpp" />
     <ClCompile Include="Source\utilities\fileutils.cpp" />
     <ClCompile Include="Source\utilities\objutils.cpp" />
   </ItemGroup>
@@ -39,6 +39,7 @@
     <ClInclude Include="Source\graphics\buffer\buffer.h" />
     <ClInclude Include="Source\graphics\buffer\indexbuffer.h" />
     <ClInclude Include="Source\graphics\buffer\vertexarray.h" />
+    <ClInclude Include="Source\graphics\camera.h" />
     <ClInclude Include="Source\graphics\shader.h" />
     <ClInclude Include="Source\graphics\Window.h" />
     <ClInclude Include="Source\maths\mat4.h" />
@@ -54,8 +55,6 @@
   <ItemGroup>
     <None Include="Source\shaders\basic.frag" />
     <None Include="Source\shaders\basic.vert" />
-    <None Include="Source\test\week5Test\basic.frag" />
-    <None Include="Source\test\week5Test\basic.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -109,7 +108,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\OpenGL\glfw-3.2.1.bin.WIN32\include;C:\OpenGL\GLEW\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\OpenGL\glm\glm;C:\OpenGL\glfw-3.2.1.bin.WIN32\include;C:\OpenGL\GLEW\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\OpenGL\glfw-3.2.1.bin.WIN32\lib-vc2015;C:\OpenGL\glew\lib;$(LibraryPath)</LibraryPath>
     <LibraryWPath>
     </LibraryWPath>
