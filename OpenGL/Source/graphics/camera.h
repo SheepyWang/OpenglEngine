@@ -6,6 +6,9 @@
 #include "../maths/maths_func.h"
 
 class Camer {
+private:
+
+
 public:
 	static mat4 lookAt(const vec3 & cameraPos, const vec3 & cameraTarget, const vec3 & cameraUp);
 };

@@ -22,6 +22,7 @@ public:
 	bool isKeyPressed(unsigned int keycode) const;
 	bool isMouseButtonPressed(unsigned int button) const;
 	void getMousePosition(double & x, double & y) const;
+	void getAsepct(double & aspect) const;
 
 private:
 	int m_Width;
@@ -32,12 +33,14 @@ private:
 	bool m_Keys[MAX_KEYS];
 	bool m_MouseButtons[MAX_BUTTONS];
 	double m_x, m_y;
+	double m_aspect;
 
 private:
 	friend static void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
 	friend static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
 	friend static void window_size_callback(GLFWwindow * window, int width, int height);
 	friend static void cursor_position_callback(GLFWwindow *window, double xpos, double ypos);
+	friend static void scroll_callback(GLFWwindow *Window, double xoffset, double yoffet);
 };
 
 #endif

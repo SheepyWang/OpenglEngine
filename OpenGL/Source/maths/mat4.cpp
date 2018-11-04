@@ -22,26 +22,6 @@ mat4::mat4(const float a) {
 
 
 
-mat4::mat4(const vec3 & v1, const vec3 & v2, const vec3 & v3) {
-	
-	memset(elements, 0, sizeof(elements));
-
-	elements[4 * 0 + 0] = v1.x;
-	elements[4 * 1 + 0] = v1.y;
-	elements[4 * 2 + 0] = v1.z;
-
-	elements[4 * 0 + 1] = v2.x;
-	elements[4 * 1 + 1] = v2.y;
-	elements[4 * 2 + 1] = v2.z;
-
-	elements[4 * 0 + 2] = v3.x;
-	elements[4 * 1 + 2] = v3.y;
-	elements[4 * 2 + 1] = v3.z;
-
-	elements[15] = 1;
-}
-
-
 mat4 & mat4::multiply(const mat4 & m4) {
 
 	mat4 tmp;
@@ -103,9 +83,9 @@ mat4 mat4::orthographic(float left, float right, float bottom, float top, float 
 
 mat4 mat4::perspective(float fov, float aspectRatio, float near, float far) {
 	mat4 pm;
-	//float fovRad = toRadians(fov / 2);
-	pm.elements[0 + 0 * 4 ] = 1 / (aspectRatio * tan(fov));
-	pm.elements[1 + 1 * 4] = 1 / (tan(fov));
+	float fovRad = toRadians(fov / 2);
+	pm.elements[0 + 0 * 4 ] = 1 / (aspectRatio * tan(fovRad));
+	pm.elements[1 + 1 * 4] = 1 / (tan(fovRad));
 	pm.elements[2 + 2 * 4] = (far + near) / (near - far);
 	pm.elements[2 + 3 * 4] = 2 * far * near / (near - far);
 	pm.elements[3 + 2 * 4] = -1;

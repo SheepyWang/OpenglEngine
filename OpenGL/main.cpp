@@ -15,7 +15,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 #define Window_TITLE "ZJU GAME DEVELOPEMENT"
@@ -37,84 +36,107 @@ int main() {
 
 	mat4 scala_matric = mat4::scale(vec3(0.5, 0.5, 0.5));
 
-	shader.setUniformMat4("perspective_matrix", mat4::perspective(45, (GLfloat)WINDOW_HEIGHT / (GLfloat)WINDOW_WIDTH, 0.1f, 100.0f));
+	
 	shader.setUniformMat4("scale_matrix", mat4::scale(vec3(0.1,0.1,0.1)));
 	shader.setUniform4f("vertexColor", vec4(0.2f, 0.3f, 0.8f, 1.0f));
 
 
 	//摄像机方向
 	vec3 cameraPos = vec3(0.0, 0.0f, 3.0f);
-	vec3 cameraTarget = vec3(0.0f, 0.0f, 0.0f);
 	vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
 	vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
 
-	glm::vec3 cameraPos2 = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraFront2 = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraUp2 = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::mat4 view2 = glm::lookAt(cameraPos2, cameraPos2 + cameraFront2, cameraUp2);
 	
 	GLfloat cameraSpeed = 0.01;
 
 	mat4 view;
 
-	view = mat4(3);
-	for (int i = 0; i < 4; i++) {
-		cout << view.columns[i];
-	}
+	//通过时间控制速度，统一速度
+	GLfloat deltaTime = 0.0f;
+	GLfloat lastFrame = 0.0f;
 
-	bool isPrint = false;
+	//鼠标坐标
+	GLfloat lastX = WINDOW_WIDTH / 2;
+	GLfloat lastY = WINDOW_HEIGHT / 2;
+	double xpos = WINDOW_WIDTH / 2;
+	double ypos = WINDOW_HEIGHT / 2;
+	GLfloat yaw = -90;
+	GLfloat pitch = 0;
+	double aspect;
+
+	bool isFirstMouse = true;
+
+
+
 
 	while (!window.closed()) {
 
-		
+	
 
+		//速度同步
+		GLfloat currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+		cameraSpeed = 4 * deltaTime;
+
+		//键盘处理
 		if (window.isKeyPressed(GLFW_KEY_W)) {
 			cameraPos += cameraFront * cameraSpeed;
-			cameraPos2 += cameraFront2 * cameraSpeed;
-			isPrint = true;
 		}
 		if (window.isKeyPressed(GLFW_KEY_S)) {
 			cameraPos -= cameraFront * cameraSpeed;
-			cameraPos2 -= cameraFront2 * cameraSpeed;
-			isPrint = true;
 		}
 		if (window.isKeyPressed(GLFW_KEY_A)) {
 			cameraPos -= vec3::normalize(vec3::cross(cameraFront, cameraUp)) * cameraSpeed;
-			cameraPos2 -= glm::normalize(glm::cross(cameraFront2, cameraUp2)) * cameraSpeed;
-			isPrint = true;
 		}
 		if (window.isKeyPressed(GLFW_KEY_D)) {
 			cameraPos += vec3::normalize(vec3::cross(cameraFront, cameraUp)) * cameraSpeed;
-			cameraPos2 += glm::normalize(glm::cross(cameraFront2, cameraUp2)) * cameraSpeed;
-			isPrint = true;
-		}
-		if (isPrint) {
-
-			cout << "canPos :" << cameraPos << endl;
-			cout << "canPos2 :";
-			for (int i = 0; i < 3; i++) {
-				cout << cameraPos2[i] << " ";
-			}
-			cout << endl;
-
-			cout << "view: " << endl;
-			for (int i = 0; i < 4; i++) {
-				cout << view.columns[i];
-			}
-			cout << endl;
-
-			cout << "view2: " << endl;
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 4; j++) {
-					cout << view2[i][j] << " ";
-				}
-				cout << endl;
-			}
-			cout << endl;
-			isPrint = false;
 		}
 
-		view2 = glm::lookAt(cameraPos2, cameraPos2 + cameraFront2, cameraUp2);
+		if (window.isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+			window.getMousePosition(xpos, ypos);
+		}
+		else{
+			isFirstMouse = true;
+		}
+
+		window.getAsepct(aspect);
+		cout << aspect << endl;
+		shader.setUniformMat4("perspective_matrix", mat4::perspective(aspect, (GLfloat)WINDOW_HEIGHT / (GLfloat)WINDOW_WIDTH, 0.1f, 100.0f));
+			   
+		//鼠标处理
+		if (isFirstMouse) {
+			lastX = xpos;
+			lastY = ypos;
+			isFirstMouse = false;
+		}
+
+		GLfloat xoffet = xpos - lastX;
+		GLfloat yoffet = lastY - ypos;
+		lastX = xpos;
+		lastY = ypos;
+
+		GLfloat sensitivity = 0.05;
+		xoffet *= -sensitivity;
+		yoffet *= -sensitivity;
+
+		yaw += xoffet;
+		pitch += yoffet;
+
+		if (pitch > 89.0f) {
+			pitch = 89.0f;
+		}
+		if (pitch < -89.0f) {
+			pitch = -89.0f;
+		}
+		
+		vec3 front;
+		front.y = sin(glm::radians(pitch));
+		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+		cameraFront = vec3::normalize(front);
+		
+
 		view = Camer::lookAt(cameraPos, cameraFront + cameraPos, cameraUp);
 		shader.setUniformMat4("view_matrix", view);
 

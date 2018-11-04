@@ -4,11 +4,13 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
 void window_size_callback(GLFWwindow * window, int width, int height);
 void cursor_position_callback(GLFWwindow *window, double xpos, double ypos);
+void scroll_callback(GLFWwindow *Window, double xoffset, double yoffet);
 
 Window::Window(const char * title, const int width, const int height) {
 	m_Title = title;
 	m_Width = width;
 	m_Height = height;
+	m_aspect = 45.0f;
 
 	if (!init()) {
 		glfwTerminate();
@@ -40,6 +42,8 @@ bool Window::init() {
 	glfwSetWindowSizeCallback(m_Window, window_size_callback);
 	glfwSetMouseButtonCallback(m_Window, mouse_button_callback);
 	glfwSetCursorPosCallback(m_Window, cursor_position_callback);
+	glfwSetScrollCallback(m_Window, scroll_callback);
+	
 
 	if (glewInit() != GLEW_OK) {
 		std::cout << "GLEW FAIL" << std::endl;
@@ -86,6 +90,10 @@ void Window::getMousePosition(double & x, double & y) const {
 	y = m_y;
 }
 
+void Window::getAsepct(double & aspect) const {
+	aspect = m_aspect;
+}
+
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods) {
 	Window * win = (Window*)glfwGetWindowUserPointer(window);
 	win->m_Keys[key] = (action != GLFW_RELEASE);
@@ -104,4 +112,17 @@ void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
 
 void window_size_callback(GLFWwindow * window, int width, int height) {
 	glViewport(0, 0, width, height);
+}
+
+void scroll_callback(GLFWwindow * window, double xoffset, double yoffset) {
+	Window * win = (Window*)glfwGetWindowUserPointer(window);
+	if (win->m_aspect >= 1.0f && win->m_aspect <= 45.0f) {
+		win->m_aspect -= yoffset;
+	}
+	if(win->m_aspect < 1.0f){
+		win->m_aspect = 1.0f;
+	}
+	if (win->m_aspect > 45.0f) {
+		win->m_aspect = 45.0f;
+	}
 }
