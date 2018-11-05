@@ -44,7 +44,7 @@ Model ObjUtils::readObj(const char * objpath) {
 							index *= 10;
 							index += *pstr - '0';
 						}
-						else if (*pstr == '/' || (count == 2 && *pstr == ' ')) {//数字分隔
+						else if (*pstr == '/' || (count == 2 && *pstr == ' ') || (count == 2 && *pstr == '\n')) {//数字分隔
 							switch (count) {
 							case 0://顶点
 								v3uVertex.index[i] = --index; break;

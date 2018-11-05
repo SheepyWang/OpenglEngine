@@ -56,6 +56,9 @@
     <None Include="Source\shaders\basic.frag" />
     <None Include="Source\shaders\basic.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Text.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{D58FAC2D-C217-4E93-876B-01D140FC5416}</ProjectGuid>
