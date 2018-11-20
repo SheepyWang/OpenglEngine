@@ -1,11 +1,11 @@
 #version 440 core
 
-uniform vec4 vertexColor; 
-uniform vec3 lightPos;
 out vec4 color;
 
 in vec3 Normal;
 in vec3 FragPos;
+in vec3 NowColor;
+in vec3 NewLightPos;
 
 void main(){
 
@@ -13,12 +13,15 @@ void main(){
 
 	//Diffuse
 	vec3 norm = normalize(Normal);
-	vec3 lightDir = normalize(lightPos - FragPos);
+//	vec3 lightDir = normalize(lightPos - FragPos);
+vec3 lightDir = normalize(NewLightPos - FragPos);
 	float diff = max(dot(norm,lightDir),0.0);
 	vec3 diffuse = diff * lightColor;
 
-	vec3 result = diffuse * vec3(vertexColor);
+//	vec3 result = diffuse * vec3(vertexColor);
+	vec3 result = diffuse * vec3(NowColor);
 
 	color = vec4(result,1.0f);
 //	color = vertexColor;
+//	color = vec4(NowColor,1.0f);
 }

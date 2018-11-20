@@ -32,7 +32,9 @@
     <ClCompile Include="Source\maths\vec3u.cpp" />
     <ClCompile Include="Source\maths\vec4.cpp" />
     <ClCompile Include="Source\model\model.cpp" />
+    <ClCompile Include="Source\test\camera\main.cpp" />
     <ClCompile Include="Source\utilities\fileutils.cpp" />
+    <ClCompile Include="Source\utilities\noiseutils.cpp" />
     <ClCompile Include="Source\utilities\objutils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -50,14 +52,12 @@
     <ClInclude Include="Source\maths\vec4.h" />
     <ClInclude Include="Source\model\model.h" />
     <ClInclude Include="Source\utilities\fileutils.h" />
+    <ClInclude Include="Source\utilities\noiseutils.h" />
     <ClInclude Include="Source\utilities\objutils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\shaders\basic.frag" />
     <None Include="Source\shaders\basic.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Text.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

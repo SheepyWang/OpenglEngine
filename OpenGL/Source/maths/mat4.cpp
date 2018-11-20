@@ -1,12 +1,9 @@
 #include "mat4.h"
 #include "vec3.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
 
-float toRadians(float degrees) {
-	return degrees * M_PI / 180.0f;
-}
+
+
 
 
 mat4::mat4() {
@@ -28,12 +25,11 @@ mat4 & mat4::multiply(const mat4 & m4) {
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			int pos = 4 * i + j;
 			float sum = 0;
 			for (int z = 0; z < 4; z++) {
-				sum += this->elements[i * 4 + z] * m4.elements[i + z * 4];
+				sum += this->elements[i * 4 + z] * m4.elements[j + z * 4];
 			}
-			tmp.elements[pos] = sum;
+			tmp.elements[4 * i + j] = sum;
 		}
 	}
 

@@ -50,6 +50,7 @@ bool Window::init() {
 		return false;
 	}
 
+	glEnable(GL_DEPTH_TEST);
 	std::cout << "OpenGL " << glGetString(GL_VERSION) << std::endl;
 	return true;
 }
@@ -92,6 +93,10 @@ void Window::getMousePosition(double & x, double & y) const {
 
 void Window::getAsepct(double & aspect) const {
 	aspect = m_aspect;
+}
+
+void Window::getMouseScroll(double & yoffet) {
+	yoffet = m_yoffet;
 }
 
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods) {

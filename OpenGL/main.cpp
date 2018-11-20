@@ -1,4 +1,5 @@
 #include <iostream>
+#include <windows.h>
 
 #include "Source/model/model.h"
 #include "Source/utilities/objutils.h"
@@ -7,13 +8,22 @@
 #include "Source/graphics/buffer/indexbuffer.h"
 #include "Source/graphics/buffer/vertexarray.h"
 #include "Source/graphics/camera.h"
+#include "Source/utilities/noiseutils.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <sysinfoapi.h>
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 #define Window_TITLE "ZJU GAME DEVELOPEMENT"
+
+#define MAP_WIDTH 50
+#define MAP_HEIGHT 50
+
+Window window = Window(Window_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+void CameraMove();
 
 
 using namespace std;
@@ -27,9 +37,76 @@ vector <Node> list;
 
 int main() {
 
-	Model model = ObjUtils::readObj("Source/model/dragon.obj");
+	//Model model = ObjUtils::readObj("Source/model/dragon.obj");
 	vector <vec3> vertexes;
 	vector <vec3> normals;
+
+	NoiseUtils noise(0.2,32);
+	
+	
+	float k = 4;
+	vector <vec3> map;
+	for (int x = 0; x < MAP_WIDTH; x++) {
+		for (int z = 0; z < MAP_HEIGHT; z++) {
+			map.push_back(vec3(x, k * noise.PerlinNoise((float)x, (float)z),z));
+		}
+	}
+	vector <float> ylist;
+	vector<vec3> colors;
+	vec3 lightgreen = vec3(0.8, 1.0, 0.0);
+	vec3 deepgreen = vec3(0.6, 0.8, 0.2);
+	vec3 brown = vec3(0.8, 0.6, 0.2);
+	vec3 ice = vec3(0.8, 1.0, 1.0);
+
+	int startPos = 0;
+	for (int i = 0; i < MAP_HEIGHT - 1; i++) {//ÐÐ
+		int nowStartPos = startPos;
+		int lineDownPos = i * MAP_WIDTH;
+		int lineUpPos = (i + 1) * MAP_WIDTH;
+		int nextPos[2] = { lineDownPos + 1,lineUpPos + 1 };
+		for (int j = 0; j < 2*(MAP_WIDTH - 1); j++) {
+			int thirdPos = nextPos[nowStartPos];
+			vertexes.push_back(map[lineDownPos]);
+			vertexes.push_back(map[lineUpPos]);
+			vertexes.push_back(map[thirdPos]);
+			float avg_y = (map[lineDownPos].y + map[lineUpPos].y + map[thirdPos].y) / 3;
+			if (avg_y < 0) {
+				colors.push_back(lightgreen);
+				colors.push_back(lightgreen);
+				colors.push_back(lightgreen);
+			}
+			else if (avg_y <= 0.5) {
+				colors.push_back(deepgreen);
+				colors.push_back(deepgreen);
+				colors.push_back(deepgreen);
+			}
+			else if(avg_y <= 1){
+				colors.push_back(brown);
+				colors.push_back(brown);
+				colors.push_back(brown);
+			}
+			else{
+				colors.push_back(ice);
+				colors.push_back(ice);
+				colors.push_back(ice);
+			}
+			vec3 norml = vec3::cross(map[lineDownPos] - map[thirdPos], map[lineDownPos] - map[lineUpPos]);
+			for (int i = 0; i < 3; i++) {
+				normals.push_back(norml);
+			}
+			if (nowStartPos == 0) {
+				lineDownPos++;
+			}
+			else {
+				lineUpPos++;
+				nextPos[0] = lineDownPos + 1;
+				nextPos[1] = lineUpPos + 1;
+			}
+			nowStartPos = 1 - nowStartPos;
+		}
+	}
+
+
 
 //	vertexes.resize(model.m_vertexIndices.size() * 3);
 //	normals.resize(model.m_normalIndices.size() * 3);
@@ -37,22 +114,22 @@ int main() {
 	//vertexes.resize(36);
 	//normals.resize(36);
 
-	for (int i = 0; i < model.m_vertexIndices.size(); i++) {
-		for (int j = 0; j < 3; j++) {
-			int v_index = model.m_vertexIndices[i].index[j];
-			vertexes.push_back(model.m_vertexes[v_index]);
-		}
-	}
-	
+	//for (int i = 0; i < model.m_vertexIndices.size(); i++) {
+	//	for (int j = 0; j < 3; j++) {
+	//		int v_index = model.m_vertexIndices[i].index[j];
+	//		vertexes.push_back(model.m_vertexes[v_index]);
+	//	}
+	//}
+	//
 
 
-	int count = 0;
-	for (int i = 0; i < model.m_vertexIndices.size(); i++) {
-		for (int j = 0; j < 3; j++) {
-			int n_index = model.m_normalIndices[i].index[j];
-			normals.push_back(model.m_normals[n_index]);
-		}
-	}
+	//int count = 0;
+	//for (int i = 0; i < model.m_vertexIndices.size(); i++) {
+	//	for (int j = 0; j < 3; j++) {
+	//		int n_index = model.m_normalIndices[i].index[j];
+	//		normals.push_back(model.m_normals[n_index]);
+	//	}
+	//}
 
 
 
@@ -63,12 +140,11 @@ int main() {
 
 
 
-	Window window = Window(Window_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	VertexArray vao;
 	vao.addBuffer(new Buffer(&vertexes[0].x, vertexes.size() * 3, 3), 0);
 	vao.addBuffer(new Buffer(&normals[0].x, normals.size() * 3, 3), 1);
-
+	vao.addBuffer(new Buffer(&colors[0].x, colors.size() * 3, 3),2);
 
 
 	//	vao.addBuffer(new Buffer(&model.m_vertexes[0].x, model.m_vertexes.size() * 3, 3), 0);
@@ -77,83 +153,61 @@ int main() {
 	Shader shader("Source/shaders/basic.vert", "Source/shaders/basic.frag");
 	shader.enable();
 
-	mat4 scala_matric = mat4::scale(vec3(0.5, 0.5, 0.5));
+	GLfloat yaw = -90, pitch = 0;
 
-	GLfloat xoffet = 0, yoffset = -5, zoffet = -15;
-	//GLfloat xoffet = 0, yoffset = 0, zoffet = -5;
-	GLfloat yaw = 0, ditch = 0;
-
-	shader.setUniformMat4("scale_matrix", mat4::scale(vec3(0.1, 0.1, 0.1)));
-	shader.setUniform4f("vertexColor", vec4(0.2f, 0.3f, 0.8f, 1.0f));
+	shader.setUniform3f("lightPos", vec3(0.1, MAP_HEIGHT / 2, MAP_WIDTH /2));
 	shader.setUniformMat4("perspective_matrix", mat4::perspective(45, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f));
-	shader.setUniformMat4("translation_matrix", mat4::translation(vec3(xoffet, yoffset, zoffet)));
-	shader.setUniformMat4("rotation_matrix", mat4::rotation(yaw, vec3(0, 1, 0)));
-	shader.setUniformMat4("rotation_matrix", mat4::rotation(ditch, vec3(1, 0, 0)));
-	shader.setUniform3f("lightPos", vec3(1.2f, 1.0f, 2.0f));
+
+	mat4 view = mat4();
+	GLfloat x= -50, y = 0, z = -50;
 	
-	glEnable(GL_DEPTH_TEST);
+
+	Camera camera = Camera(vec3(0.0f, 3.0f, 3.0f));
+
 
 	GLfloat deltaTime = 0.0f;
 	GLfloat lastFrame = 0.0f;
-	GLfloat camerSpeed;
+
+
+	GLfloat preXPos = WINDOW_WIDTH / 2, preYPos = WINDOW_HEIGHT / 2;
+	bool isFirstPress = true;
+
+	float preTime = GetTickCount();
 
 	while (!window.closed()) {
 
+		float nowTime = GetTickCount();
+		if (nowTime - preTime > 10) {//½µµÍÖ¡Êý
 
-		GLfloat currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-		camerSpeed = 5 * deltaTime;
+			GLfloat currentFrame = glfwGetTime();
+			deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
 
-		if (window.isKeyPressed(GLFW_KEY_W)) {
-			zoffet += camerSpeed;
+
+			
+
+			camera.move(&window, preXPos, preYPos, deltaTime,isFirstPress);
+			shader.setUniformMat4("perspective_matrix", mat4::perspective(camera.getZoom(), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f));
+			mat4 view = camera.getViewMatrix();
+			shader.setUniformMat4("view_matrix",view);
+			
+
+			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			window.clear();
+
+			vao.bind();
+			//		ibo.bind();
+			//		glDrawElements(GL_TRIANGLES, ibo.getCount(), GL_UNSIGNED_SHORT, 0);
+			glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
+			//		ibo.unbind();
+			vao.unbind();
+
+			window.update();
 		}
-		if (window.isKeyPressed(GLFW_KEY_S)) {
-			zoffet -= camerSpeed;
-		}
-		if (window.isKeyPressed(GLFW_KEY_A) || window.isKeyPressed(GLFW_KEY_LEFT)) {
-			xoffet += camerSpeed;
-		}
-		if (window.isKeyPressed(GLFW_KEY_D) || window.isKeyPressed(GLFW_KEY_RIGHT)) {
-			xoffet -= camerSpeed;
-		}
-		if (window.isKeyPressed(GLFW_KEY_UP)) {
-			yoffset += camerSpeed;
-		}
-		if (window.isKeyPressed(GLFW_KEY_DOWN)) {
-			yoffset -= camerSpeed;
-		}
-
-
-		if (window.isKeyPressed(GLFW_KEY_Q)) {
-			yaw += camerSpeed * 3;
-			shader.setUniformMat4("rotation_matrix", mat4::rotation(yaw, vec3(0, 1, 0)));
-		}
-		if (window.isKeyPressed(GLFW_KEY_E)) {
-			yaw -= camerSpeed * 3;
-			shader.setUniformMat4("rotation_matrix", mat4::rotation(yaw, vec3(0, 1, 0)));
-		}
-
-
-
-
-		shader.setUniformMat4("translation_matrix", mat4::translation(vec3(xoffet, yoffset, zoffet)));
-
-
-
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		window.clear();
-
-		vao.bind();
-		//		ibo.bind();
-		//		glDrawElements(GL_TRIANGLES, ibo.getCount(), GL_UNSIGNED_SHORT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
-		//		ibo.unbind();
-		vao.unbind();
-
-		window.update();
 	}
 	shader.disable();
 
 	return 0;
 }
+
+

@@ -3,9 +3,11 @@
 #ifndef _MAT4_H_
 #define _MAT4_H_
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include "vec4.h"
 #include "vec3.h"
-
 
 struct mat4{
 	union {
@@ -29,6 +31,9 @@ struct mat4{
 	static mat4 rotation(float angle, const vec3 &axis);
 	static mat4 scale(const vec3 &scale);
 	
+	static float toRadians(float degrees) {
+		return degrees * M_PI / 180.0f;
+	}
 	
 };
 
