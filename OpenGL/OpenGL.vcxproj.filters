@@ -63,7 +63,7 @@
     <ClCompile Include="Source\utilities\noiseutils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\test\camera\main.cpp">
+    <ClCompile Include="Source\graphics\cameraRPG.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -114,6 +114,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\utilities\noiseutils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphics\cameraRPG.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

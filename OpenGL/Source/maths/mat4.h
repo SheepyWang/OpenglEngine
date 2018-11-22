@@ -21,6 +21,7 @@ struct mat4{
 
 	mat4 & multiply(const mat4 & m4);
 	friend mat4 operator * (const  mat4 & left, mat4 right);
+	friend vec3 operator*(const vec3 & left, mat4 right);
 	mat4 & operator *= (const mat4 & m4);
 
 	static mat4 identity();

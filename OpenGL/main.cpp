@@ -7,7 +7,7 @@
 #include "Source/graphics/shader.h"
 #include "Source/graphics/buffer/indexbuffer.h"
 #include "Source/graphics/buffer/vertexarray.h"
-#include "Source/graphics/camera.h"
+#include "Source/graphics/cameraRPG.h"
 #include "Source/utilities/noiseutils.h"
 
 #define _USE_MATH_DEFINES
@@ -18,13 +18,10 @@
 #define WINDOW_HEIGHT 720
 #define Window_TITLE "ZJU GAME DEVELOPEMENT"
 
-#define MAP_WIDTH 50
-#define MAP_HEIGHT 50
+#define MAP_WIDTH 100
+#define MAP_HEIGHT 100
 
 Window window = Window(Window_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-void CameraMove();
-
 
 using namespace std;
 
@@ -41,14 +38,14 @@ int main() {
 	vector <vec3> vertexes;
 	vector <vec3> normals;
 
-	NoiseUtils noise(0.2,32);
-	
-	
+	NoiseUtils noise(0.2, 32);
+
+
 	float k = 4;
 	vector <vec3> map;
-	for (int x = 0; x < MAP_WIDTH; x++) {
-		for (int z = 0; z < MAP_HEIGHT; z++) {
-			map.push_back(vec3(x, k * noise.PerlinNoise((float)x, (float)z),z));
+	for (int x = -MAP_WIDTH / 2; x < MAP_WIDTH/2; x++) {
+		for (int z = -MAP_HEIGHT / 2; z < MAP_HEIGHT/2; z++) {
+			map.push_back(vec3(x, k * noise.PerlinNoise((float)x, (float)z), z));
 		}
 	}
 	vector <float> ylist;
@@ -64,7 +61,7 @@ int main() {
 		int lineDownPos = i * MAP_WIDTH;
 		int lineUpPos = (i + 1) * MAP_WIDTH;
 		int nextPos[2] = { lineDownPos + 1,lineUpPos + 1 };
-		for (int j = 0; j < 2*(MAP_WIDTH - 1); j++) {
+		for (int j = 0; j < 2 * (MAP_WIDTH - 1); j++) {
 			int thirdPos = nextPos[nowStartPos];
 			vertexes.push_back(map[lineDownPos]);
 			vertexes.push_back(map[lineUpPos]);
@@ -80,12 +77,12 @@ int main() {
 				colors.push_back(deepgreen);
 				colors.push_back(deepgreen);
 			}
-			else if(avg_y <= 1){
+			else if (avg_y <= 1) {
 				colors.push_back(brown);
 				colors.push_back(brown);
 				colors.push_back(brown);
 			}
-			else{
+			else {
 				colors.push_back(ice);
 				colors.push_back(ice);
 				colors.push_back(ice);
@@ -108,35 +105,35 @@ int main() {
 
 
 
-//	vertexes.resize(model.m_vertexIndices.size() * 3);
-//	normals.resize(model.m_normalIndices.size() * 3);
+	//	vertexes.resize(model.m_vertexIndices.size() * 3);
+	//	normals.resize(model.m_normalIndices.size() * 3);
 
-	//vertexes.resize(36);
-	//normals.resize(36);
+		//vertexes.resize(36);
+		//normals.resize(36);
 
-	//for (int i = 0; i < model.m_vertexIndices.size(); i++) {
-	//	for (int j = 0; j < 3; j++) {
-	//		int v_index = model.m_vertexIndices[i].index[j];
-	//		vertexes.push_back(model.m_vertexes[v_index]);
-	//	}
-	//}
-	//
-
-
-	//int count = 0;
-	//for (int i = 0; i < model.m_vertexIndices.size(); i++) {
-	//	for (int j = 0; j < 3; j++) {
-	//		int n_index = model.m_normalIndices[i].index[j];
-	//		normals.push_back(model.m_normals[n_index]);
-	//	}
-	//}
+		//for (int i = 0; i < model.m_vertexIndices.size(); i++) {
+		//	for (int j = 0; j < 3; j++) {
+		//		int v_index = model.m_vertexIndices[i].index[j];
+		//		vertexes.push_back(model.m_vertexes[v_index]);
+		//	}
+		//}
+		//
 
 
+		//int count = 0;
+		//for (int i = 0; i < model.m_vertexIndices.size(); i++) {
+		//	for (int j = 0; j < 3; j++) {
+		//		int n_index = model.m_normalIndices[i].index[j];
+		//		normals.push_back(model.m_normals[n_index]);
+		//	}
+		//}
 
-	//for (int i = 0; i < 36; i++) {
-	//	scanf("%f %f %f %f %f %f", &vertexes[i].x, &vertexes[i].y, &vertexes[i].z,
-	//		&normals[i].x, &normals[i].y, &normals[i].z);
-	//}
+
+
+		//for (int i = 0; i < 36; i++) {
+		//	scanf("%f %f %f %f %f %f", &vertexes[i].x, &vertexes[i].y, &vertexes[i].z,
+		//		&normals[i].x, &normals[i].y, &normals[i].z);
+		//}
 
 
 
@@ -144,7 +141,7 @@ int main() {
 	VertexArray vao;
 	vao.addBuffer(new Buffer(&vertexes[0].x, vertexes.size() * 3, 3), 0);
 	vao.addBuffer(new Buffer(&normals[0].x, normals.size() * 3, 3), 1);
-	vao.addBuffer(new Buffer(&colors[0].x, colors.size() * 3, 3),2);
+	vao.addBuffer(new Buffer(&colors[0].x, colors.size() * 3, 3), 2);
 
 
 	//	vao.addBuffer(new Buffer(&model.m_vertexes[0].x, model.m_vertexes.size() * 3, 3), 0);
@@ -155,14 +152,14 @@ int main() {
 
 	GLfloat yaw = -90, pitch = 0;
 
-	shader.setUniform3f("lightPos", vec3(0.1, MAP_HEIGHT / 2, MAP_WIDTH /2));
+	shader.setUniform3f("lightPos", vec3(0.1, MAP_HEIGHT / 2, MAP_WIDTH / 2));
 	shader.setUniformMat4("perspective_matrix", mat4::perspective(45, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f));
 
 	mat4 view = mat4();
-	GLfloat x= -50, y = 0, z = -50;
-	
+	GLfloat x = -50, y = 0, z = -50;
 
-	Camera camera = Camera(vec3(0.0f, 3.0f, 3.0f));
+
+	CameraRPG camera = CameraRPG(vec3(0.0f, 0.0f, -5.0f), vec3(0.0f, 5.0f, 5.0f));
 
 
 	GLfloat deltaTime = 0.0f;
@@ -184,13 +181,13 @@ int main() {
 			lastFrame = currentFrame;
 
 
-			
 
-			camera.move(&window, preXPos, preYPos, deltaTime,isFirstPress);
-			shader.setUniformMat4("perspective_matrix", mat4::perspective(camera.getZoom(), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f));
+
+			camera.update(&window, preXPos, preYPos, deltaTime, isFirstPress);
+//			shader.setUniformMat4("perspective_matrix", mat4::perspective(camera.getZoom(), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f));
 			mat4 view = camera.getViewMatrix();
-			shader.setUniformMat4("view_matrix",view);
-			
+			shader.setUniformMat4("view_matrix", view);
+
 
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			window.clear();
