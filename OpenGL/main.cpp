@@ -40,6 +40,17 @@ int main() {
 
 	NoiseUtils noise(0.2, 32);
 
+	vec3 test = vec3(0.0f, 0.0f, 1.0f);
+	mat4 rotatex = mat4::rotation(90, AXISY);
+	mat4 rotatey = mat4::rotation(90, AXISX);
+	mat4 result = rotatex * rotatey;
+
+
+	cout << test * rotatex << endl;
+	cout << test * rotatey << endl;
+	cout << test * rotatex * rotatey << endl;
+	cout << test * rotatey * rotatex << endl;
+
 
 	float k = 4;
 	vector <vec3> map;

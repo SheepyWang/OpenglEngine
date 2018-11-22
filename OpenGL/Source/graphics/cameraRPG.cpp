@@ -8,12 +8,15 @@ void CameraRPG::init() {
 	m_WorldUp = vec3(0.0f, 1.0f, 0.0f);
 	m_Speed = SPEED;
 	m_Sensitivity = SENSITIVTY;
+	m_yaw = 0.0f;
+	m_pitch = 0.0f;
 
 }
 
 void CameraRPG::vectorUpdate() {
-	m_Right = vec3::normalize(vec3::cross(m_Front, m_WorldUp));
-	m_Up = vec3::normalize(vec3::cross(m_Right, m_Front));
+	vec3 temp_Front = m_Front * mat4::rotation(m_yaw, AXISY);
+	m_Right = vec3::normalize(vec3::cross(temp_Front, m_WorldUp));
+	m_Up = vec3::normalize(vec3::cross(m_Right, temp_Front));
 }
 
 CameraRPG::CameraRPG(vec3 Target, vec3 Offset) {
@@ -29,45 +32,37 @@ CameraRPG::CameraRPG(GLfloat TargetX, GLfloat TargetY, GLfloat TargetZ, GLfloat 
 }
 
 void CameraRPG::processKeyboard(Window * window, GLfloat deltaTime) {
+
 	GLfloat velocity = m_Speed * deltaTime;
+
 	if (window->isKeyPressed(GLFW_KEY_W)) {
-		m_Move += m_Front * velocity;
+		m_Move += m_Front * mat4::rotation(m_yaw, AXISY) * velocity;
 	}
 	if(window->isKeyPressed(GLFW_KEY_S)) {
-		m_Move -= m_Front * velocity;
+		m_Move -= m_Front * mat4::rotation(m_yaw, AXISY) * velocity;
 	}
 	if(window->isKeyPressed(GLFW_KEY_A)) {
 		m_Move -= m_Right * velocity;
 	}
 	if(window->isKeyPressed(GLFW_KEY_D)) {
-		m_Move -= m_Right * velocity;
+		m_Move += m_Right * velocity;
 	}
 	if (window->isKeyPressed(GLFW_KEY_Q)) {
-		mat4 rotate = mat4::rotation(velocity * m_Sensitivity, vec3(0.0f, 1.0f, 0.0f));
-		m_Front = m_Front * rotate;
-		m_Offset = m_Offset * rotate;
-		m_Zoom = m_Zoom * rotate;
-	//	m_yaw += velocity * m_Sensitivity;
+		m_yaw += velocity * m_Sensitivity;
 	}
 	if (window->isKeyPressed(GLFW_KEY_E)) {
-		mat4 rotate = mat4::rotation(-velocity * m_Sensitivity, vec3(0.0f, 1.0f, 0.0f));
-		m_Front = m_Front * rotate;
-		m_Offset = m_Offset * rotate;
-		m_Zoom = m_Zoom * rotate;
-	//	m_yaw -= velocity * m_Sensitivity;
+		m_yaw -= velocity * m_Sensitivity;
 	}
 	if (window->isKeyPressed(GLFW_KEY_Z)) {
-		mat4 rotate = mat4::rotation(velocity * m_Sensitivity, vec3(1.0f, 0.0f, 0.0f));
-		m_Offset = m_Offset * rotate;
-		m_Zoom = m_Zoom * rotate;
-	//	m_pitch += velocity * m_Sensitivity;
+		m_pitch += velocity * m_Sensitivity;
 	}
 	if (window->isKeyPressed(GLFW_KEY_C)) {
-		mat4 rotate = mat4::rotation(-velocity * m_Sensitivity, vec3(1.0f, 0.0f, 0.0f));
-		m_Offset = m_Offset * rotate;
-		m_Zoom = m_Zoom * rotate;
-	//	m_pitch -= velocity * m_Sensitivity;
+		m_pitch -= velocity * m_Sensitivity;
 	}
+	if (m_pitch > 89.9f)
+		m_pitch = 89.9f;
+	if (m_pitch < -44.9f)
+		m_pitch = -44.9f;
 }
 
 void CameraRPG::update(Window * window, GLfloat & prePosX, GLfloat & prePosY, GLfloat deltaTime, bool & isFirst) {
@@ -76,7 +71,8 @@ void CameraRPG::update(Window * window, GLfloat & prePosX, GLfloat & prePosY, GL
 }
 
 mat4 CameraRPG::getViewMatrix() {
-	return CameraRPG::lookAt(m_Target + m_Offset + m_Move, m_Target + m_Move, m_Up);
+	//pitch和yaw有先后顺序
+	return CameraRPG::lookAt(m_Target + (m_Offset * mat4::rotation(m_pitch, AXISX) * mat4::rotation(m_yaw, AXISY)) + m_Move, m_Target + m_Move, m_Up);
 }
 
 
