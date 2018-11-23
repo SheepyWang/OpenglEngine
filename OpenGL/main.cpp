@@ -191,14 +191,10 @@ int main() {
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
 
-
-
-
 			camera.update(&window, preXPos, preYPos, deltaTime, isFirstPress);
 //			shader.setUniformMat4("perspective_matrix", mat4::perspective(camera.getZoom(), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f));
 			mat4 view = camera.getViewMatrix();
 			shader.setUniformMat4("view_matrix", view);
-
 
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			window.clear();

@@ -10,7 +10,7 @@ Window::Window(const char * title, const int width, const int height) {
 	m_Title = title;
 	m_Width = width;
 	m_Height = height;
-	m_aspect = 45.0f;
+	m_aspect = 2.0f;
 
 	if (!init()) {
 		glfwTerminate();
@@ -130,4 +130,6 @@ void scroll_callback(GLFWwindow * window, double xoffset, double yoffset) {
 	if (win->m_aspect > 45.0f) {
 		win->m_aspect = 45.0f;
 	}
+
+	win->m_yoffet = yoffset;
 }
