@@ -36,6 +36,7 @@
     <ClCompile Include="Source\utilities\fileutils.cpp" />
     <ClCompile Include="Source\utilities\noiseutils.cpp" />
     <ClCompile Include="Source\utilities\objutils.cpp" />
+    <ClCompile Include="Source\utilities\Perlin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\graphics\buffer\buffer.h" />
@@ -55,6 +56,7 @@
     <ClInclude Include="Source\utilities\fileutils.h" />
     <ClInclude Include="Source\utilities\noiseutils.h" />
     <ClInclude Include="Source\utilities\objutils.h" />
+    <ClInclude Include="Source\utilities\Perlin.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\shaders\basic.frag" />

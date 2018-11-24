@@ -9,6 +9,7 @@
 #include "Source/graphics/buffer/vertexarray.h"
 #include "Source/graphics/cameraRPG.h"
 #include "Source/utilities/noiseutils.h"
+#include "Source/utilities/Perlin.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -38,7 +39,10 @@ int main() {
 	vector <vec3> vertexes;
 	vector <vec3> normals;
 
-	NoiseUtils noise(0.2, 32);
+
+	NoiseUtils noise(0.5, 2);
+	Perlin p = Perlin(200);
+
 
 	vec3 test = vec3(0.0f, 0.0f, 1.0f);
 	mat4 rotatex = mat4::rotation(90, AXISY);
@@ -52,11 +56,14 @@ int main() {
 	cout << test * rotatey * rotatex << endl;
 
 
-	float k = 4;
+	float k = 16;
+	float gap = 0.05;
 	vector <vec3> map;
-	for (int x = -MAP_WIDTH / 2; x < MAP_WIDTH/2; x++) {
-		for (int z = -MAP_HEIGHT / 2; z < MAP_HEIGHT/2; z++) {
-			map.push_back(vec3(x, k * noise.PerlinNoise((float)x, (float)z), z));
+	for (int x = 0; x < MAP_WIDTH; x++) {
+		for (int z = 0; z < MAP_HEIGHT; z++){
+			int x_p = x < 0 ? -x : x;
+			int z_p = z < 0 ? -z : z;
+			map.push_back(vec3(x - MAP_WIDTH /2, k * p.octavePerlin(x_p * gap, 0, z_p * gap,32, 1/32), z - MAP_HEIGHT /2));
 		}
 	}
 	vector <float> ylist;
@@ -78,20 +85,20 @@ int main() {
 			vertexes.push_back(map[lineUpPos]);
 			vertexes.push_back(map[thirdPos]);
 			float avg_y = (map[lineDownPos].y + map[lineUpPos].y + map[thirdPos].y) / 3;
-			if (avg_y < 0) {
+			if (avg_y < 7) {
+				colors.push_back(brown);
+				colors.push_back(brown);
+				colors.push_back(brown);
+			}
+			else if (avg_y <= 10) {
 				colors.push_back(lightgreen);
 				colors.push_back(lightgreen);
 				colors.push_back(lightgreen);
 			}
-			else if (avg_y <= 0.5) {
+			else if (avg_y <= 15) {
 				colors.push_back(deepgreen);
 				colors.push_back(deepgreen);
 				colors.push_back(deepgreen);
-			}
-			else if (avg_y <= 1) {
-				colors.push_back(brown);
-				colors.push_back(brown);
-				colors.push_back(brown);
 			}
 			else {
 				colors.push_back(ice);
@@ -163,14 +170,14 @@ int main() {
 
 	GLfloat yaw = -90, pitch = 0;
 
-	shader.setUniform3f("lightPos", vec3(0.1, MAP_HEIGHT / 2, MAP_WIDTH / 2));
-	shader.setUniformMat4("perspective_matrix", mat4::perspective(45, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f));
+	shader.setUniform3f("lightPos", vec3(0, 100 , 0));
+	shader.setUniformMat4("perspective_matrix", mat4::perspective(45, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 200.0f));
 
 	mat4 view = mat4();
 	GLfloat x = -50, y = 0, z = -50;
 
 
-	CameraRPG camera = CameraRPG(vec3(0.0f, 0.0f, -5.0f), vec3(0.0f, 5.0f, 5.0f));
+	CameraRPG camera = CameraRPG(vec3(0.0f, 0.0f, -30.0f), vec3(0.0f, 30.0f, 30.0f));
 
 
 	GLfloat deltaTime = 0.0f;
@@ -181,6 +188,10 @@ int main() {
 	bool isFirstPress = true;
 
 	float preTime = GetTickCount();
+	float startTime = GetTickCount();
+	vec4 colorday = vec4(1.0f, 1.0f, 1.0f,1.0f);
+	vec4 colornight = vec4(0.2f, 0.2f, 0.6f, 1.0f);
+	int isDay = 1;
 
 	while (!window.closed()) {
 
@@ -196,7 +207,21 @@ int main() {
 			mat4 view = camera.getViewMatrix();
 			shader.setUniformMat4("view_matrix", view);
 
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			float nowTime = GetTickCount() - startTime;
+			float a = nowTime / 30000;
+			if (a == 1) {
+				isDay = 1 - isDay;
+				startTime = GetTickCount();
+			}
+			vec4 nowSkyColor;
+			if (isDay) {
+				nowSkyColor = vec4::LineInterpolation(colorday,colornight,a);
+			}
+			else{
+				nowSkyColor = vec4::LineInterpolation(colornight,colorday, a);
+			}
+			shader.setUniform4f("NowlightColor", nowSkyColor);
+			glClearColor(nowSkyColor.x, nowSkyColor.y, nowSkyColor.z, nowSkyColor.w);
 			window.clear();
 
 			vao.bind();

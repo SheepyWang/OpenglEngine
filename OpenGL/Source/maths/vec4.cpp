@@ -86,3 +86,13 @@ std::ostream & operator << (std::ostream & out, const vec4 & v4) {
 	out << "vec4 = (" << v4.x << ", " << v4.y << ", " << v4.z << ", " << v4.w <<")\n";
 	return out;
 }
+
+vec4 vec4::LineInterpolation(const vec4 & left, const vec4 & right, float a) {
+	vec4 result;
+	float b = 1 - a;
+	result.x = left.x * b + right.x * a;
+	result.y = left.y * b + right.y * a;
+	result.z = left.z * b + right.z * a;
+	result.w = left.w * b + right.w * a;
+	return result;
+}

@@ -32,6 +32,8 @@ struct vec4 {
 	bool operator!=(const vec4 & v4);
 
 	friend std::ostream & operator << (std::ostream & out, const vec4 & v4);
+
+	static vec4 LineInterpolation(const vec4 & left, const vec4 & right ,float a);
 };
 
 #endif

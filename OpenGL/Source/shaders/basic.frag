@@ -6,10 +6,11 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec3 NowColor;
 in vec3 NewLightPos;
+uniform vec4 NowlightColor;
 
 void main(){
 
-	vec3 lightColor = vec3(1.0f,1.0f,1.0f);
+	vec3 lightColor = vec3(NowlightColor);
 
 	//Diffuse
 	vec3 norm = normalize(Normal);

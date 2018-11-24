@@ -66,6 +66,9 @@
     <ClCompile Include="Source\graphics\cameraRPG.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Source\utilities\Perlin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\utilities\fileutils.h">
@@ -117,6 +120,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\graphics\cameraRPG.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\utilities\Perlin.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
