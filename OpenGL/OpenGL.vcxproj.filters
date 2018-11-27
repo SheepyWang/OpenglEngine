@@ -69,6 +69,9 @@
     <ClCompile Include="Source\utilities\Perlin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Source\graphics\terrain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\utilities\fileutils.h">
@@ -123,6 +126,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Source\utilities\Perlin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\graphics\terrain.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

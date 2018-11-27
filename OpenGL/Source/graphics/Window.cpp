@@ -121,11 +121,11 @@ void window_size_callback(GLFWwindow * window, int width, int height) {
 
 void scroll_callback(GLFWwindow * window, double xoffset, double yoffset) {
 	Window * win = (Window*)glfwGetWindowUserPointer(window);
-	if (win->m_aspect >= 1.0f && win->m_aspect <= 45.0f) {
+	if (win->m_aspect >= -30.0f && win->m_aspect <= 45.0f) {
 		win->m_aspect -= yoffset;
 	}
-	if(win->m_aspect < 1.0f){
-		win->m_aspect = 1.0f;
+	if(win->m_aspect < -30.0f){
+		win->m_aspect = -30.0f;
 	}
 	if (win->m_aspect > 45.0f) {
 		win->m_aspect = 45.0f;

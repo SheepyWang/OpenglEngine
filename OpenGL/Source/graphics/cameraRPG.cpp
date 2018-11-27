@@ -36,6 +36,14 @@ CameraRPG::CameraRPG(GLfloat TargetX, GLfloat TargetY, GLfloat TargetZ, GLfloat 
 	m_Offset = vec3(OffsetX, OffsetY, OffsetZ);
 }
 
+vec3 CameraRPG::getCameraPos() {
+	return m_Target + ((m_Offset + vec3::normalize(m_Offset) * m_Distance) * mat4::rotation(m_Pitch, AXISX) * mat4::rotation(m_Yaw, AXISY)) + m_Move;
+}
+
+vec3 CameraRPG::getTargetPos() {
+	return m_Target + m_Move;
+}
+
 void CameraRPG::processKeyboard(Window * window, GLfloat deltaTime) {
 
 	GLfloat velocity = m_Speed * deltaTime;
@@ -82,10 +90,10 @@ void CameraRPG::processMouseMovenment(GLfloat xoffset, GLfloat yoffset, GLfloat 
 		m_Move -= m_Right * velocity;
 	}
 	if (yoffset < -m_Omission) {
-		m_Move += m_Up * velocity;
+		m_Move -= m_Up * velocity;
 	}
 	if (yoffset > m_Omission) {
-		m_Move -= m_Up * velocity;
+		m_Move += m_Up * velocity;
 	}
 
 	if (m_Pitch > 89.9f)
@@ -105,10 +113,10 @@ void CameraRPG::processMouseRotate(GLfloat xoffset, GLfloat yoffset, GLfloat del
 		m_Yaw -= velocity;
 	}
 	if (yoffset < -m_Omission) {
-		m_Pitch -= velocity;
+		m_Pitch += velocity;
 	}
 	if (yoffset > m_Omission) {
-		m_Pitch += velocity;
+		m_Pitch -= velocity;
 	}
 }
 

@@ -22,7 +22,7 @@ Model ObjUtils::readObj(const char * objpath) {
 			else if (strcmp(str, "vt") == 0) {//纹理
 				vec2 v2;
 				//直接读取顶点信息
-				fscanf(pfile, "%f%f%f", &v2.x, &v2.y);
+				fscanf(pfile, "%f%f", &v2.x, &v2.y);
 				model.m_textures.push_back(v2);
 			}
 			else if (strcmp(str, "vn") == 0) {//法线

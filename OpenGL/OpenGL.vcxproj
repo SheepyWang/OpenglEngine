@@ -26,6 +26,7 @@
     <ClCompile Include="Source\graphics\camera.cpp" />
     <ClCompile Include="Source\graphics\cameraRPG.cpp" />
     <ClCompile Include="Source\graphics\shader.cpp" />
+    <ClCompile Include="Source\graphics\terrain.cpp" />
     <ClCompile Include="Source\graphics\Window.cpp" />
     <ClCompile Include="Source\maths\mat4.cpp" />
     <ClCompile Include="Source\maths\vec2.cpp" />
@@ -45,6 +46,7 @@
     <ClInclude Include="Source\graphics\camera.h" />
     <ClInclude Include="Source\graphics\cameraRPG.h" />
     <ClInclude Include="Source\graphics\shader.h" />
+    <ClInclude Include="Source\graphics\terrain.h" />
     <ClInclude Include="Source\graphics\Window.h" />
     <ClInclude Include="Source\maths\mat4.h" />
     <ClInclude Include="Source\maths\maths_func.h" />

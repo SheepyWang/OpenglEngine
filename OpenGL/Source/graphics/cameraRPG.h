@@ -37,6 +37,8 @@ public:
 	
 	CameraRPG(vec3 Target, vec3 Offset);
 	CameraRPG(GLfloat TargetX, GLfloat TargetY, GLfloat TargetZ, GLfloat OffsetX, GLfloat OffsetY, GLfloat OffsetZ);
+	vec3 getCameraPos();
+	vec3 getTargetPos();
 	mat4 getViewMatrix();
 	void processKeyboard(Window * window, GLfloat deltaTime);
 	void processMouseMovenment(GLfloat xoffset, GLfloat yoffset, GLfloat deltaTime);
