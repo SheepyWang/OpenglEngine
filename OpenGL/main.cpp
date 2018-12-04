@@ -145,7 +145,8 @@ int main() {
 			//ÈÕÒ¹±ä»¯
 			float nowTime = GetTickCount() - startTime;
 			float a = nowTime / 30000;
-			if (a == 1) {
+			printf("%f\n", a);
+			if (a >= 0.99f) {
 				isDay = 1 - isDay;
 				startTime = GetTickCount();
 			}
