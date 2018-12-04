@@ -50,6 +50,10 @@ int main() {
 	vector <vec3> normals;
 	vector<vec3> colors;
 
+	vector <vec3> vertexes2;
+	vector <vec3> normals2;
+	vector<vec3> colors2;
+
 
 	float NowTime = GetTickCount();
 
@@ -65,10 +69,11 @@ int main() {
 
 	int terrainSize = vertexes.size();
 
+	//Ä£ÐÍ¼ÓÔØ
 	for (int i = 0; i < model.m_vertexIndices.size(); i++) {
 		for (int j = 0; j < 3; j++) {
 			int v_index = model.m_vertexIndices[i].index[j];
-			vertexes.push_back(model.m_vertexes[v_index]);
+			vertexes2.push_back(model.m_vertexes[v_index]);
 		}
 	}
 
@@ -78,10 +83,11 @@ int main() {
 	for (int i = 0; i < model.m_vertexIndices.size(); i++) {
 		for (int j = 0; j < 3; j++) {
 			int n_index = model.m_normalIndices[i].index[j];
-			normals.push_back(model.m_normals[n_index]);
-			colors.push_back(vec3(0.8, 1.0, 1.0));
+			normals2.push_back(model.m_normals[n_index]);
+			colors2.push_back(vec3(0.8, 1.0, 1.0));
 		}
 	}
+
 
 
 	VertexArray vao;
@@ -89,6 +95,11 @@ int main() {
 	vao.addBuffer(new Buffer(&normals[0].x, normals.size() * 3, 3), 1);
 	vao.addBuffer(new Buffer(&colors[0].x, colors.size() * 3, 3), 2);
 
+
+	VertexArray vao2;
+	vao2.addBuffer(new Buffer(&vertexes2[0].x, vertexes2.size() * 3, 3), 0);
+	vao2.addBuffer(new Buffer(&normals2[0].x, normals2.size() * 3, 3), 1);
+	vao2.addBuffer(new Buffer(&colors2[0].x, colors2.size() * 3, 3), 2);
 
 	//	vao.addBuffer(new Buffer(&model.m_vertexes[0].x, model.m_vertexes.size() * 3, 3), 0);
 	//	IndexBuffer ibo(&model.m_vertexIndices[0].index[0], model.m_vertexIndices.size() * 3);
@@ -161,8 +172,11 @@ int main() {
 			//		ibo.bind();
 			//		glDrawElements(GL_TRIANGLES, ibo.getCount(), GL_UNSIGNED_SHORT, 0);
 			shader.setUniformMat4("model_matrix", mat4(1));
-			glDrawArrays(GL_TRIANGLES, 0, terrainSize);
+			glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
 			//		ibo.unbind();
+			vao.unbind();
+
+			vao2.bind();
 			for (int i = 0; i < 20; i++) {
 				c[i].pos.x -= deltaTime * 3;
 				if (c[i].pos.x < -MAP_WIDTH / 2) {
@@ -171,10 +185,9 @@ int main() {
 				}
 				mat4 model = mat4::translation(c[i].pos);
 				shader.setUniformMat4("model_matrix", model);
-				glDrawArrays(GL_TRIANGLES, terrainSize, dargonSize);
+				glDrawArrays(GL_TRIANGLES, 0, vertexes2.size());
 			}
-
-			vao.unbind();
+			vao2.unbind();
 
 
 			window.update();
